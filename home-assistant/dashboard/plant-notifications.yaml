@@ -1,0 +1,136 @@
+# Plant Watering Notification Automations
+#
+# Add these to your automations.yaml or create via UI.
+# Sends notifications when plants need water or battery is low.
+
+# =============================================================================
+# LOW MOISTURE ALERT
+# =============================================================================
+
+- id: plant_needs_water_alert
+  alias: "Plant Needs Water Alert"
+  description: "Notify when soil moisture drops below threshold"
+
+  trigger:
+    - platform: numeric_state
+      entity_id:
+        - sensor.sgs01_living_room_moisture
+        # Add more sensors here:
+        # - sensor.sgs01_bedroom_moisture
+        # - sensor.sgs01_kitchen_moisture
+      below: 25
+      for:
+        minutes: 30  # Avoid false alerts from temporary dips
+
+  condition:
+    # Only alert during reasonable hours
+    - condition: time
+      after: "08:00:00"
+      before: "21:00:00"
+
+  action:
+    - service: notify.notify  # Change to your notification service
+      data:
+        title: "🌱 Plant Needs Water!"
+        message: >-
+          {{ trigger.to_state.attributes.friendly_name }} moisture is at
+          {{ trigger.to_state.state }}%. Time to water!
+        data:
+          # For mobile app notifications
+          tag: "plant-water-{{ trigger.entity_id }}"
+          group: "plant-alerts"
+          # Android specific
+          channel: "Plant Alerts"
+          importance: high
+          # iOS specific
+          push:
+            sound: default
+
+  mode: parallel
+  max: 10
+
+# =============================================================================
+# LOW BATTERY ALERT
+# =============================================================================
+
+- id: plant_sensor_low_battery
+  alias: "Plant Sensor Low Battery"
+  description: "Notify when sensor battery is low"
+
+  trigger:
+    - platform: numeric_state
+      entity_id:
+        - sensor.sgs01_living_room_battery
+        # Add more sensors here
+      below: 20
+      for:
+        hours: 1  # Battery changes slowly, avoid repeated alerts
+
+  action:
+    - service: notify.notify
+      data:
+        title: "🔋 Plant Sensor Battery Low"
+        message: >-
+          {{ trigger.to_state.attributes.friendly_name }} battery is at
+          {{ trigger.to_state.state }}%. Replace batteries soon.
+        data:
+          tag: "plant-battery-{{ trigger.entity_id }}"
+          group: "plant-alerts"
+
+  mode: parallel
+  max: 10
+
+# =============================================================================
+# DAILY PLANT STATUS SUMMARY
+# =============================================================================
+
+- id: daily_plant_summary
+  alias: "Daily Plant Status Summary"
+  description: "Send daily summary of all plant moisture levels"
+
+  trigger:
+    - platform: time
+      at: "09:00:00"
+
+  action:
+    - service: notify.notify
+      data:
+        title: "🌱 Daily Plant Report"
+        message: >-
+          {% set plants = [
+            ('Living Room', states('sensor.sgs01_living_room_moisture')),
+          ] %}
+          {% for name, moisture in plants %}
+          {% set m = moisture | int(0) %}
+          {% set icon = '🔴' if m < 20 else '🟡' if m < 40 else '🟢' %}
+          {{ icon }} {{ name }}: {{ moisture }}%
+          {% endfor %}
+
+  mode: single
+
+# =============================================================================
+# SENSOR OFFLINE ALERT
+# =============================================================================
+
+- id: plant_sensor_offline
+  alias: "Plant Sensor Offline Alert"
+  description: "Notify if sensor becomes unavailable"
+
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.sgs01_living_room_moisture
+        # Add more sensors
+      to: "unavailable"
+      for:
+        hours: 2  # Give it time to recover
+
+  action:
+    - service: notify.notify
+      data:
+        title: "⚠️ Plant Sensor Offline"
+        message: >-
+          {{ trigger.to_state.attributes.friendly_name }} has been
+          unavailable for 2 hours. Check batteries or BLE proxy.
+
+  mode: parallel

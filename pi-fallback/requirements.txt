@@ -1,0 +1,16 @@
+# BLE Poller Dependencies
+
+# Async BLE library
+bleak>=0.21.0
+
+# MQTT client
+paho-mqtt>=2.0.0
+
+# Configuration parsing
+pyyaml>=6.0
+
+# Cryptography for Tuya protocol
+cryptography>=41.0.0
+
+# Async utilities
+asyncio-mqtt>=0.16.0

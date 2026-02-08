@@ -1,0 +1,74 @@
+# Plant Sensor Dashboard Card
+#
+# Copy this YAML into your Lovelace dashboard.
+# Edit → Raw Configuration Editor → paste where needed
+#
+# Or use the UI: Add Card → Manual → paste YAML
+#
+# Prerequisites:
+# - Sensors configured and working
+# - (Optional) HACS card: custom:mushroom-template-card for nicer styling
+
+# =============================================================================
+# OPTION 1: Simple Entity Card (No custom cards needed)
+# =============================================================================
+
+type: entities
+title: Plant Sensors
+icon: mdi:flower
+entities:
+  - type: section
+    label: Living Room
+  - entity: sensor.sgs01_living_room_moisture
+    name: Soil Moisture
+    icon: mdi:water-percent
+  - entity: sensor.sgs01_living_room_temperature
+    name: Temperature
+  - entity: sensor.sgs01_living_room_battery
+    name: Battery
+    icon: mdi:battery
+
+# =============================================================================
+# OPTION 2: Glance Card (Compact view for multiple sensors)
+# =============================================================================
+
+# type: glance
+# title: Plant Sensors
+# columns: 3
+# entities:
+#   - entity: sensor.sgs01_living_room_moisture
+#     name: Living Room
+#     icon: mdi:water-percent
+#   - entity: sensor.sgs01_bedroom_moisture
+#     name: Bedroom
+#     icon: mdi:water-percent
+#   - entity: sensor.sgs01_kitchen_moisture
+#     name: Kitchen
+#     icon: mdi:water-percent
+
+# =============================================================================
+# OPTION 3: Gauge Cards (Visual moisture levels)
+# =============================================================================
+
+# type: vertical-stack
+# cards:
+#   - type: horizontal-stack
+#     cards:
+#       - type: gauge
+#         entity: sensor.sgs01_living_room_moisture
+#         name: Living Room
+#         min: 0
+#         max: 100
+#         severity:
+#           green: 40
+#           yellow: 20
+#           red: 0
+#       - type: gauge
+#         entity: sensor.sgs01_bedroom_moisture
+#         name: Bedroom
+#         min: 0
+#         max: 100
+#         severity:
+#           green: 40
+#           yellow: 20
+#           red: 0

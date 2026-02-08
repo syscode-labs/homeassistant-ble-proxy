@@ -1,0 +1,63 @@
+# SGS01 Plant Sensor Polling Automation
+#
+# The SGS01 sensor doesn't passively broadcast data. It needs to be
+# "poked" periodically by writing to one of its settings (temperature unit)
+# to trigger it to send updated readings.
+#
+# Usage:
+#   1. Add this to your automations.yaml or create via UI
+#   2. Update entity_id to match your sensor's actual entity name
+#   3. Adjust the polling interval as needed (default: 15 minutes)
+#
+# Note: More frequent polling may drain the sensor battery faster.
+
+- id: poke_sgs01_plant_sensors
+  alias: "Poke SGS01 Plant Sensors"
+  description: "Periodically trigger SGS01 sensors to send updated readings"
+
+  trigger:
+    # Run every 15 minutes
+    - platform: time_pattern
+      minutes: "/15"
+
+  condition: []
+
+  action:
+    # Poke each SGS01 sensor by setting temperature unit
+    # The value doesn't matter - the write action triggers data transmission
+
+    # Sensor 1: Living Room (update entity_id to match yours)
+    - service: select.select_option
+      target:
+        entity_id: select.sgs01_living_room_temperature_unit
+      data:
+        option: "celsius"
+
+    # Add more sensors as needed:
+    # - service: select.select_option
+    #   target:
+    #     entity_id: select.sgs01_bedroom_temperature_unit
+    #   data:
+    #     option: "celsius"
+
+  mode: single
+
+# Alternative: Per-sensor automation with different intervals
+# Uncomment and modify if you want different polling rates per sensor
+
+# - id: poke_sgs01_bedroom
+#   alias: "Poke SGS01 Bedroom (Infrequent)"
+#   description: "Poll bedroom sensor less frequently to save battery"
+#
+#   trigger:
+#     - platform: time_pattern
+#       hours: "/1"  # Every hour
+#
+#   action:
+#     - service: select.select_option
+#       target:
+#         entity_id: select.sgs01_bedroom_temperature_unit
+#       data:
+#         option: "celsius"
+#
+#   mode: single

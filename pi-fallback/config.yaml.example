@@ -1,0 +1,61 @@
+# BLE Poller Configuration
+#
+# Copy to config.yaml and fill in your values.
+# NEVER commit config.yaml to version control!
+
+# MQTT Broker settings
+mqtt:
+  host: "homeassistant.wind-bearded.ts.net"
+  port: 1883
+  username: "mqtt_user"
+  password: "mqtt_password"
+  # Optional: TLS settings
+  # tls: true
+  # ca_cert: "/path/to/ca.crt"
+
+# Polling settings
+polling:
+  interval_seconds: 900  # 15 minutes
+  retry_attempts: 3
+  retry_delay_seconds: 30
+  # BLE connection timeout
+  connect_timeout_seconds: 30
+
+# Home Assistant Discovery settings
+homeassistant:
+  discovery_prefix: "homeassistant"
+  # Unique identifier for this proxy instance
+  node_id: "ble_proxy_living_room"
+
+# Sensor definitions
+# Add each SGS01 sensor here
+sensors:
+  - name: "Plant Sensor Living Room"
+    # Get MAC address from Smart Life app or BLE scan
+    mac_address: "AA:BB:CC:DD:EE:FF"
+    # Get these from Tuya IoT Platform (see docs/sop.md)
+    device_id: "your_device_id"
+    local_key: "your_local_key"
+    # Optional: product_id and uuid for some firmware versions
+    # product_id: "xxxxxxxx"
+    # uuid: "xxxxxxxx"
+
+    # Unique ID for Home Assistant (used in entity_id)
+    unique_id: "sgs01_living_room"
+
+    # Optional: location for grouping
+    location: "Living Room"
+
+  # Add more sensors:
+  # - name: "Plant Sensor Bedroom"
+  #   mac_address: "11:22:33:44:55:66"
+  #   device_id: "another_device_id"
+  #   local_key: "another_local_key"
+  #   unique_id: "sgs01_bedroom"
+  #   location: "Bedroom"
+
+# Logging settings
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  # Log to file (in addition to journald)
+  # file: "/var/log/ble-poller/poller.log"

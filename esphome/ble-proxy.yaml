@@ -1,0 +1,93 @@
+# ESPHome BLE Proxy Configuration
+#
+# This configuration creates a Bluetooth Low Energy proxy that extends
+# Home Assistant's Bluetooth reach over WiFi.
+#
+# Usage:
+#   1. Copy this file for each proxy location
+#   2. Update the 'name' and 'friendly_name' substitutions
+#   3. Update the 'board' under esp32: if using different hardware
+#
+# Supported boards:
+#   - esp32-c3-devkitm-1  (ESP32-C3 SuperMini, recommended)
+#   - esp32dev            (ESP32-WROOM/DevKit)
+#   - esp32-s3-devkitc-1  (ESP32-S3)
+
+substitutions:
+  name: ble-proxy-living-room
+  friendly_name: "BLE Proxy Living Room"
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: esp-idf
+
+# Enable logging
+logger:
+  level: INFO
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+# Enable Over-The-Air updates
+ota:
+  platform: esphome
+  password: !secret ota_password
+
+# WiFi configuration
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot in case WiFi connection fails
+  ap:
+    ssid: "${name} Fallback"
+    password: !secret fallback_password
+
+# Fallback portal
+captive_portal:
+
+# Bluetooth Low Energy Tracker
+# Required for the proxy to discover BLE devices
+esp32_ble_tracker:
+  scan_parameters:
+    # Active scanning required for Tuya BLE devices
+    active: true
+    # Scan interval and window (continuous scanning)
+    interval: 1100ms
+    window: 1100ms
+
+# Bluetooth Proxy Component
+# This is what makes the ESP32 act as a BLE adapter for Home Assistant
+bluetooth_proxy:
+  # Active mode required for devices that need GATT connections (like SGS01)
+  active: true
+  # Number of simultaneous BLE connections (default: 3)
+  # Increase if you have many active BLE devices
+  # cache_services: true  # Uncomment to cache services for faster reconnection
+
+# Optional: Status LED (adjust pin for your board)
+# Uncomment and modify if your board has an LED
+# status_led:
+#   pin: GPIO8  # Common for ESP32-C3
+
+# Optional: Expose some diagnostic sensors
+sensor:
+  - platform: wifi_signal
+    name: "WiFi Signal"
+    update_interval: 60s
+
+  - platform: uptime
+    name: "Uptime"
+    update_interval: 60s
+
+# Report free memory (useful for debugging)
+text_sensor:
+  - platform: version
+    name: "ESPHome Version"

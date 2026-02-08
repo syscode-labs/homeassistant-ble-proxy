@@ -1,0 +1,44 @@
+[Unit]
+Description=BLE Poller for Tuya SGS01 Sensors
+Documentation=https://github.com/your-repo/homeassistant_ble_proxy
+After=network-online.target bluetooth.target
+Wants=network-online.target bluetooth.target
+
+[Service]
+Type=simple
+User=ble-poller
+Group=bluetooth
+
+# Working directory
+WorkingDirectory=/opt/ble-poller
+
+# Start command
+ExecStart=/opt/ble-poller/venv/bin/python /opt/ble-poller/ble_poller.py --config /opt/ble-poller/config.yaml
+
+# Restart on failure
+Restart=on-failure
+RestartSec=30
+
+# Give time for graceful shutdown
+TimeoutStopSec=10
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+
+# Allow read-write for logs if needed
+# ReadWritePaths=/var/log/ble-poller
+
+# Required for Bluetooth access
+AmbientCapabilities=CAP_NET_RAW CAP_NET_ADMIN
+
+# Environment
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
