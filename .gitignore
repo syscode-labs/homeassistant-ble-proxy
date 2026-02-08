@@ -27,6 +27,8 @@ build/
 
 # OS
 .DS_Store
+.AppleDouble
+.LSOverride
 Thumbs.db
 
 # Logs
@@ -37,3 +39,17 @@ logs/
 .env
 .env.local
 .claude/
+
+# GitHub Actions
+.act/
+
+# Editor backups
+*.bak
+*.orig
+
+# Python extras
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
