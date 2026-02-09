@@ -11,18 +11,16 @@ References:
 
 import asyncio
 import hashlib
-import hmac
 import logging
 import struct
-import time
 from dataclasses import dataclass
 from enum import IntEnum
-from typing import Any, Callable, Optional
+from typing import Optional
 
 from bleak import BleakClient, BleakScanner
 from bleak.exc import BleakError
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 logger = logging.getLogger(__name__)
 
@@ -394,7 +392,7 @@ class TuyaBLEDevice:
         """Parse received DPs into SensorData object."""
         data = SensorData(raw_dps=self._received_dps.copy())
 
-        for dp_id, (name, dp_type, transform) in SGS01_DP_MAPPING.items():
+        for dp_id, (name, _dp_type, transform) in SGS01_DP_MAPPING.items():
             if dp_id in self._received_dps:
                 try:
                     value = transform(self._received_dps[dp_id])

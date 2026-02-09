@@ -24,7 +24,7 @@ from typing import Optional
 import yaml
 
 from mqtt_publisher import HADiscoveryPublisher, MQTTConfig
-from tuya_ble import TuyaBLEDevice, SensorData, scan_for_tuya_devices
+from tuya_ble import SensorData, TuyaBLEDevice, scan_for_tuya_devices
 
 # Configure logging
 logging.basicConfig(

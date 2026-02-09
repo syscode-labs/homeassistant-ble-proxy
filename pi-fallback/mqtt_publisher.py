@@ -8,7 +8,7 @@ import json
 import logging
 import ssl
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Optional
 
 import paho.mqtt.client as mqtt
 
