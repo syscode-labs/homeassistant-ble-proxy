@@ -45,6 +45,34 @@ This project provides two methods to connect Tuya BLE plant sensors (SGS01) to H
 - YAML: 2-space indentation
 - Keep scripts compatible with Raspberry Pi Zero W (ARM, limited resources)
 
+## Commit Message Convention
+
+This repository enforces [Conventional Commits](https://www.conventionalcommits.org/) via pre-commit.
+All commit messages must follow the format:
+
+```
+type(scope): subject
+```
+
+Allowed types: `feat`, `fix`, `chore`, `docs`, `refactor`, `ci`, `test`, `style`, `perf`, `revert`
+
+Examples:
+
+```
+feat: add MQTT reconnect logic
+fix(ble_poller): handle timeout on sensor scan
+chore: update pre-commit hook versions
+docs: add architecture diagram to README
+refactor(tuya_ble): simplify packet parsing
+ci: add GitHub Actions lint workflow
+```
+
+The `scope` is optional. To activate the commit-msg hook after cloning, run:
+
+```bash
+make install-hooks
+```
+
 ## Testing
 
 ```bash
