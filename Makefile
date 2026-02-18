@@ -1,4 +1,4 @@
-.PHONY: help lint lint-python lint-yaml lint-markdown format install test clean
+.PHONY: help lint lint-python lint-yaml lint-markdown format install install-hooks test clean
 
 help:
 	@echo "Available targets:"
@@ -8,6 +8,7 @@ help:
 	@echo "  lint-markdown - Run markdownlint on Markdown files"
 	@echo "  format        - Auto-format Python files with Ruff"
 	@echo "  install       - Install development dependencies"
+	@echo "  install-hooks - Install pre-commit hooks including commit-msg stage"
 	@echo "  test          - Run tests"
 	@echo "  clean         - Remove build artifacts"
 
@@ -29,6 +30,9 @@ format:
 install:
 	pip install ruff yamllint markdownlint-cli2 pre-commit
 	pre-commit install
+
+install-hooks:
+	pre-commit install --hook-type commit-msg
 
 test:
 	cd pi-fallback && python -m pytest -v

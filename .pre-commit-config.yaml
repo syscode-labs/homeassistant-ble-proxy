@@ -30,3 +30,10 @@ repos:
     hooks:
       - id: markdownlint
         args: [--config, .markdownlint.json]
+
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.4.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: [feat, fix, chore, docs, refactor, ci, test, style, perf, revert]
