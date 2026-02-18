@@ -140,12 +140,14 @@ Settings → Devices & Services → Bluetooth → (x) adapters
 ## Hardware Requirements
 
 ### Option A (per zone)
+
 | Component | Model | Est. Cost |
 |-----------|-------|-----------|
 | Microcontroller | ESP32-C3 SuperMini | $2-3 |
 | Power | USB-C cable + 5V adapter | $3-5 |
 
 ### Option B (per zone)
+
 | Component | Model | Est. Cost |
 |-----------|-------|-----------|
 | SBC | Raspberry Pi Zero W | $15 |
