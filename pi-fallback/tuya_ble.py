@@ -203,7 +203,7 @@ class TuyaBLEDevice:
             if dp_type == DPType.BOOL:
                 value = bool(dp_data[0]) if dp_data else False
             elif dp_type == DPType.VALUE:
-                value = struct.unpack(">i", dp_data.ljust(4, b'\x00')[:4])[0]
+                value = struct.unpack(">i", dp_data.rjust(4, b'\x00')[:4])[0]
             elif dp_type == DPType.STRING:
                 value = dp_data.decode("utf-8", errors="replace")
             elif dp_type == DPType.ENUM:
