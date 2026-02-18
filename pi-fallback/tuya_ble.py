@@ -362,6 +362,9 @@ class TuyaBLEDevice:
                 self._response_event.clear()
                 await self._trigger_update()
                 if not self._received_dps:
+                    # Clear stale signal from _trigger_update's DP_WRITE ack before
+                    # waiting for the actual DP_REPORT notification
+                    self._response_event.clear()
                     try:
                         await asyncio.wait_for(self._response_event.wait(), timeout=5.0)
                     except asyncio.TimeoutError:
