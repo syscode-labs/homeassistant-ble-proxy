@@ -148,9 +148,9 @@ class TuyaBLEDevice:
 
         # Remove PKCS7 padding
         padding_len = decrypted[-1]
-        if padding_len <= 16:
-            return decrypted[:-padding_len]
-        return decrypted
+        if padding_len == 0 or padding_len > 16:
+            raise ValueError(f"Invalid PKCS7 padding length: {padding_len}")
+        return decrypted[:-padding_len]
 
     def _build_packet(self, command: int, data: bytes = b"") -> bytes:
         """Build a Tuya BLE packet."""
@@ -359,8 +359,13 @@ class TuyaBLEDevice:
 
             # If no DPs received, try triggering by writing temp unit
             if not self._received_dps:
+                self._response_event.clear()
                 await self._trigger_update()
-                await asyncio.sleep(2)
+                if not self._received_dps:
+                    try:
+                        await asyncio.wait_for(self._response_event.wait(), timeout=5.0)
+                    except asyncio.TimeoutError:
+                        logger.warning("No DPs received after trigger update")
 
             # Parse received DPs into SensorData
             return self._parse_sensor_data()
@@ -371,6 +376,10 @@ class TuyaBLEDevice:
 
     async def _trigger_update(self):
         """Trigger sensor to send data by writing temperature unit."""
+        if not self._client or not self._client.is_connected:
+            logger.error("Device disconnected, cannot trigger update")
+            return
+
         # Write DP 9 (temp_unit) = 0 (celsius)
         dp_data = struct.pack(">BBHB", 9, DPType.ENUM, 1, 0)
 
