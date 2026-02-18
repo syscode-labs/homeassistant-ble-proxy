@@ -34,13 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - yamllint configuration (`.yamllint.yaml`)
 - markdownlint configuration (`.markdownlint.json`)
 - pre-commit hooks configuration (`.pre-commit-config.yaml`) integrating Ruff, yamllint, and markdownlint
-
-### Fixed
-
-- Sorted imports in `pi-fallback/ble_poller.py` and `pi-fallback/mqtt_publisher.py` to satisfy Ruff linting
-- Removed unused imports in `pi-fallback/tuya_ble.py`
-- Renamed unused loop variable in `pi-fallback/tuya_ble.py` to satisfy linting rules
+- Sorted imports, removed unused imports, and renamed unused variables across `pi-fallback/` to satisfy Ruff linting from the start
 - Relaxed markdownlint line-length rule to allow longer lines in documentation
 
-[Unreleased]: https://github.com/giovanni/homeassistant_ble_proxy/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/giovanni/homeassistant_ble_proxy/releases/tag/v0.1.0
+[Unreleased]: https://github.com/syscode-labs/homeassistant-ble-proxy/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/syscode-labs/homeassistant-ble-proxy/releases/tag/v0.1.0
