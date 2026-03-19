@@ -64,6 +64,17 @@ class BLEPoller:
                     logger.error(f"Missing required config section: {section}")
                     return False
 
+            # Validate required sensor keys early to catch config errors at startup
+            required_sensor_keys = ["mac_address", "device_id", "local_key"]
+            for i, sensor in enumerate(self.config.get("sensors", [])):
+                for key in required_sensor_keys:
+                    if key not in sensor:
+                        logger.error(
+                            f"Sensor {i} ('{sensor.get('name', 'unnamed')}') "
+                            f"missing required key: '{key}'"
+                        )
+                        return False
+
             # Set logging level
             log_level = self.config.get("logging", {}).get("level", "INFO")
             logging.getLogger().setLevel(getattr(logging, log_level.upper()))
@@ -79,7 +90,7 @@ class BLEPoller:
             logger.error(f"Config load error: {e}")
             return False
 
-    def connect_mqtt(self) -> bool:
+    async def connect_mqtt(self) -> bool:
         """Initialize and connect MQTT publisher."""
         mqtt_config = self.config["mqtt"]
         ha_config = self.config.get("homeassistant", {})
@@ -96,7 +107,7 @@ class BLEPoller:
         )
 
         self.mqtt = HADiscoveryPublisher(config)
-        return self.mqtt.connect()
+        return await self.mqtt.connect()
 
     async def poll_sensor(self, sensor_config: dict) -> Optional[SensorData]:
         """
@@ -283,13 +294,8 @@ def main():
     # Initialize poller
     poller = BLEPoller(args.config)
 
-    # Load config
+    # Load config (synchronous)
     if not poller.load_config():
-        return 1
-
-    # Connect MQTT
-    if not poller.connect_mqtt():
-        logger.error("Failed to connect to MQTT broker")
         return 1
 
     # Setup signal handlers
@@ -299,16 +305,20 @@ def main():
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
 
-    # Run poller
-    try:
-        asyncio.run(poller.run(once=args.once))
-    except KeyboardInterrupt:
-        pass
-    finally:
-        if poller.mqtt:
-            poller.mqtt.disconnect()
+    async def _run():
+        if not await poller.connect_mqtt():
+            logger.error("Failed to connect to MQTT broker")
+            return 1
+        try:
+            await poller.run(once=args.once)
+        except KeyboardInterrupt:
+            pass
+        finally:
+            if poller.mqtt:
+                poller.mqtt.disconnect()
+        return 0
 
-    return 0
+    return asyncio.run(_run())
 
 
 if __name__ == "__main__":

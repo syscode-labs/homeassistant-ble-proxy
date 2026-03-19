@@ -4,6 +4,7 @@ MQTT Publisher with Home Assistant Discovery
 Publishes sensor data to MQTT with automatic Home Assistant entity configuration.
 """
 
+import asyncio
 import json
 import logging
 import ssl
@@ -42,7 +43,7 @@ class HADiscoveryPublisher:
         self._connected = False
         self._discovery_sent: set = set()
 
-    def connect(self) -> bool:
+    async def connect(self) -> bool:
         """Connect to MQTT broker."""
         try:
             # Use MQTT v5 protocol
@@ -73,12 +74,11 @@ class HADiscoveryPublisher:
             self._client.connect(self.config.host, self.config.port, keepalive=60)
             self._client.loop_start()
 
-            # Wait for connection
-            import time
+            # Wait for connection without blocking the event loop
             for _ in range(50):  # 5 seconds timeout
                 if self._connected:
                     return True
-                time.sleep(0.1)
+                await asyncio.sleep(0.1)
 
             logger.error("MQTT connection timeout")
             return False
@@ -215,6 +215,10 @@ class HADiscoveryPublisher:
             sensor_config: Sensor configuration from config file
             data: Sensor data dictionary (from SensorData.to_dict())
         """
+        if not self._connected or not self._client:
+            logger.error("Not connected to MQTT broker, dropping publish_state")
+            return
+
         unique_id = sensor_config["unique_id"]
         state_topic = f"sgs01/{unique_id}/state"
 
@@ -233,6 +237,10 @@ class HADiscoveryPublisher:
 
     def publish_availability(self, sensor_config: dict, available: bool):
         """Publish sensor availability status."""
+        if not self._connected or not self._client:
+            logger.error("Not connected to MQTT broker, dropping publish_availability")
+            return
+
         unique_id = sensor_config["unique_id"]
         availability_topic = f"sgs01/{unique_id}/availability"
 
