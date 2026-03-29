@@ -11,7 +11,7 @@ jobs:
     name: Python (Ruff)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: astral-sh/ruff-action@v1
         with:
           src: "./pi-fallback"
@@ -20,7 +20,7 @@ jobs:
     name: YAML
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: YAML Lint
         uses: ibiqlik/action-yamllint@v3
         with:
@@ -37,7 +37,7 @@ jobs:
     name: Markdown
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: DavidAnson/markdownlint-cli2-action@v16
         with:
           globs: "**/*.md"
