@@ -1,7 +1,7 @@
 # BLE Poller Dependencies
 
 # Async BLE library
-bleak>=0.21.0
+bleak>=3.0.1
 
 # MQTT client
 paho-mqtt>=2.0.0
