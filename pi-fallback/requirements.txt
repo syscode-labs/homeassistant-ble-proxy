@@ -4,7 +4,7 @@
 bleak>=3.0.1
 
 # MQTT client
-paho-mqtt>=2.0.0
+paho-mqtt>=2.1.0
 
 # Configuration parsing
 pyyaml>=6.0
