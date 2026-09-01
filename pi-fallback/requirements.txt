@@ -10,7 +10,7 @@ paho-mqtt>=2.1.0
 pyyaml>=6.0.3
 
 # Cryptography for Tuya protocol
-cryptography>=47.0.0
+cryptography>=50.0.1
 
 # Async utilities
 asyncio-mqtt>=0.16.2
